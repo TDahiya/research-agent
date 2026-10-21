@@ -118,7 +118,7 @@ Your task:
 Use [1], [2] for web citations and [P1], [P2] for paper citations.
 Use markdown formatting with clear ## sections."""
     else:
-        prompt = f"""You are a research summarizer. Synthesize the following sources into a structured summary.
+        prompt = f"""You are a research gap analyst. Analyze these sources to identify research gaps and open problems.
 
 QUERY: {state['query']}
 
@@ -126,25 +126,28 @@ SOURCES:
 {web_text}
 {feedback_note}
 
-RULES:
-- Write a structured summary with clear ## sections
-- Cite sources inline using [1], [2], etc.
-- Be comprehensive but concise
-- If sources conflict, note the disagreement
-- Use markdown formatting"""
+Your task:
+1. **Current State**: Brief overview of where the field stands based on sources
+2. **Research Gaps**: Identify specific gaps — areas where:
+   - Key problems remain unsolved or only partially addressed
+   - Contradictions or disagreements exist between sources
+   - Topics mentioned as "future work" or "limitations" that haven't been explored
+   - Methodological weaknesses or missing evaluations
+3. **Open Questions**: List concrete research questions that remain unanswered
+4. **Recommendations**: Suggest directions for new research to fill these gaps
+
+Use [1], [2] for citations. Use markdown formatting with clear ## sections."""
 
     llm = get_llm()
     resp = await llm.ainvoke([
-        SystemMessage(content="You are a precise research analyst. Provide structured, well-cited analysis."),
+        SystemMessage(content="You are a precise research gap analyst. Identify what's missing, not just what exists."),
         HumanMessage(content=prompt),
     ])
-
-    mode = "Research gap analysis" if paper_sources else "Summary"
     return {
         "summary": resp.content,
         "current_agent": "summarizer",
         "revision_feedback": "",
-        "messages": state["messages"] + [{"agent": "summarizer", "content": f"{mode} generated with inline citations."}],
+        "messages": state["messages"] + [{"agent": "summarizer", "content": "Research gap analysis generated with inline citations."}],
     }
 
 
@@ -160,19 +163,19 @@ async def fact_checker_agent(state: ResearchState) -> dict:
         f"[{i+1}] {s['title']}: {s['snippet']}" for i, s in enumerate(state["sources"])
     )
 
-    prompt = f"""You are a fact-checker. Analyze the summary below against the provided sources.
+    prompt = f"""You are a research gap verifier. Analyze the gap analysis below against the provided sources.
 
-SUMMARY:
+GAP ANALYSIS:
 {state['summary']}
 
 SOURCES:
 {sources_text}
 
-For each major claim in the summary, output a JSON array of objects with:
-- "text": the claim (one sentence)
-- "confidence": 0.0-1.0 (how well sources support it)
+For each identified research gap or claim in the analysis, output a JSON array of objects with:
+- "text": the gap or claim (one sentence)
+- "confidence": 0.0-1.0 (how well sources support this being a real gap)
 - "supporting_sources": list of source URLs that support it
-- "contradictions": list of strings describing any conflicts
+- "contradictions": list of strings describing any conflicts (e.g. a source that already addresses the gap)
 
 Return ONLY a valid JSON array. No markdown fences, no explanation."""
 

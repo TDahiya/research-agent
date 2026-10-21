@@ -171,7 +171,7 @@ function removeLoading(agent) {
 function formatAgent(agent) {
     return {
         retriever: 'Retriever',
-        summarizer: 'Analyzer',
+        summarizer: 'Gap Analyzer',
         fact_checker: 'Fact Checker',
         human_review: 'Review'
     }[agent] || agent;
@@ -372,7 +372,7 @@ function handleMessage(msg) {
                 <div class="final-result">
                     <div class="final-badge">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        Research Complete
+                        Gap Analysis Complete
                     </div>
                     <div class="message-content">${content}</div>
                 </div>
