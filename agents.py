@@ -49,7 +49,8 @@ def get_llm():
 # --- Agent nodes ---
 
 async def retriever_agent(state: ResearchState) -> dict:
-    query = state.get("revision_feedback") or state["query"]
+    feedback = state.get("revision_feedback")
+    query = f"{state['query']} — focus on: {feedback}" if feedback else state["query"]
     sources = await gather_sources(query)
 
     paper_count = sum(1 for s in sources if s["source_type"] == "paper")
@@ -263,7 +264,7 @@ def route_after_human_review(state: ResearchState) -> str:
     if state.get("human_approved"):
         return END
     if state["iteration"] < 5:
-        return "summarizer"  # re-summarize with human feedback
+        return "retriever"  # re-fetch sources with feedback, then full pipeline again
     return END
 
 
@@ -290,7 +291,7 @@ def build_graph(checkpointer=None):
         "retriever": "retriever",
     })
     graph.add_conditional_edges("human_review", route_after_human_review, {
-        "summarizer": "summarizer",
+        "retriever": "retriever",
         END: END,
     })
 

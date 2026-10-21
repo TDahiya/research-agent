@@ -433,9 +433,10 @@ function submitRevision() {
     $('#reviseInput').classList.remove('visible');
     $('#feedbackText').value = '';
     addAgentMessage('human_review', `Revision requested: "${escHtml(feedback)}"`);
-    addLoadingMessage('summarizer');
-    setActiveStep('summarizer');
-    lastAgent = 'summarizer';
+    resetPipeline();
+    addLoadingMessage('retriever');
+    setActiveStep('retriever');
+    lastAgent = 'retriever';
 }
 
 /* === Input === */
