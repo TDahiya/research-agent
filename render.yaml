@@ -7,3 +7,5 @@ services:
     envVars:
       - key: GROQ_API_KEY
         sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
