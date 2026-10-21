@@ -1,0 +1,16 @@
+name: Keep Render Alive
+
+on:
+  schedule:
+    - cron: '*/14 * * * *'  # every 14 minutes
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping all services
+        run: |
+          curl -sf https://research-agent-b8k4.onrender.com > /dev/null || true
+          curl -sf https://jobtailor-1bkr.onrender.com > /dev/null || true
+          curl -sf https://prompt-firewall-kdwm.onrender.com > /dev/null || true
+          curl -sf https://healthriskscore.onrender.com > /dev/null || true
