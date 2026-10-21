@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "research-agent",
+      "runtimeExecutable": "E:\\Research Agent\\.venv\\Scripts\\uvicorn",
+      "runtimeArgs": ["app:app", "--reload", "--port", "8000"],
+      "port": 8000
+    }
+  ]
+}

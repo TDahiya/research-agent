@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        <path d="M2 12h20"/>
+                    </svg>
+                </div>
+                <h1 class="header-title">Research Agent</h1>
+            </div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Pipeline Visualizer -->
+        <div class="pipeline" id="pipeline">
+            <div class="pipeline-step" data-step="retriever">
+                <div class="step-dot"></div>
+                <span class="step-label">Retrieve</span>
+            </div>
+            <div class="pipeline-line"></div>
+            <div class="pipeline-step" data-step="summarizer">
+                <div class="step-dot"></div>
+                <span class="step-label">Analyze</span>
+            </div>
+            <div class="pipeline-line"></div>
+            <div class="pipeline-step" data-step="fact_checker">
+                <div class="step-dot"></div>
+                <span class="step-label">Fact-Check</span>
+            </div>
+            <div class="pipeline-line"></div>
+            <div class="pipeline-step" data-step="human_review">
+                <div class="step-dot"></div>
+                <span class="step-label">Review</span>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <main class="chat-area" id="chatArea">
+            <!-- Welcome state -->
+            <div class="welcome" id="welcome">
+                <div class="welcome-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        <path d="M2 12h20"/>
+                    </svg>
+                </div>
+                <h2>What would you like to research?</h2>
+                <p class="welcome-sub">Upload academic papers for research gap analysis, or just ask a question — the system searches web, academic, and Wikipedia sources, then summarizes and fact-checks.</p>
+
+                <!-- Upload zone -->
+                <div class="upload-zone" id="uploadZone">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/>
+                    </svg>
+                    <p>Drop PDFs here or <span class="upload-link">browse</span></p>
+                    <p class="upload-hint">Upload research papers for gap analysis</p>
+                    <input type="file" id="fileInput" accept=".pdf" multiple hidden>
+                </div>
+
+                <!-- Uploaded papers -->
+                <div class="papers-list" id="papersList"></div>
+
+                <div class="suggestions">
+                    <button class="suggestion" onclick="useSuggestion(this)">Latest advances in quantum computing</button>
+                    <button class="suggestion" onclick="useSuggestion(this)">How do mRNA vaccines work?</button>
+                    <button class="suggestion" onclick="useSuggestion(this)">Impact of large language models on education</button>
+                </div>
+            </div>
+
+            <!-- Messages container -->
+            <div class="messages" id="messages"></div>
+
+            <!-- Approval bar -->
+            <div class="approval-bar" id="approvalBar">
+                <div class="approval-content">
+                    <p class="approval-title">Review the research output</p>
+                    <p class="approval-sub">Approve to finalize, or request revisions with feedback.</p>
+                    <div class="approval-actions">
+                        <button class="btn btn-approve" onclick="approve()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Approve
+                        </button>
+                        <button class="btn btn-revise" onclick="showReviseInput()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            Request Revision
+                        </button>
+                    </div>
+                    <div class="revise-input" id="reviseInput">
+                        <textarea id="feedbackText" placeholder="What should be changed or improved?" rows="2"></textarea>
+                        <button class="btn btn-send-feedback" onclick="submitRevision()">Send Feedback</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Input Bar -->
+        <div class="input-bar" id="inputBar">
+            <!-- Paper chips (shown when papers uploaded) -->
+            <div class="input-papers" id="inputPapers"></div>
+            <div class="input-wrapper">
+                <button class="attach-btn" id="attachBtn" title="Upload PDFs">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                </button>
+                <textarea id="queryInput" placeholder="Enter your research query..." rows="1" onkeydown="handleKeydown(event)"></textarea>
+                <button class="send-btn" id="sendBtn" onclick="sendQuery()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="19" x2="12" y2="5"/>
+                        <polyline points="5 12 12 5 19 12"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="input-hint">Searches web, academic papers, and Wikipedia — then summarizes and fact-checks</p>
+        </div>
+    </div>
+    <script src="/app.js"></script>
+</body>
+</html>
